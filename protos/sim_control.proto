@@ -3,6 +3,7 @@ syntax = "proto3";
 
 service SimInspector {
   rpc SendCommand(Command) returns (CommandResponse) {}
+  rpc GetFramebuffer(FramebufferRequest) returns (stream FramebufferSegment) {}
 }
 
 enum CommandType {
@@ -21,49 +22,16 @@ message CommandResponse {
   bool ok = 1;
 }
 
-//enum QueryTypes {
-//  REG_STATE = 0; //Return registers
-//  SIM_STATE = 1; //General simulator state info
-//  SIM_CONFIG = 2; //General configuration info
-//  FRAMEBUFFER_STATE = 3; //Return entire framebuffer (probably large)
-//  MEM_STATE = 4; //Return entire memory (probably very large)
-//}
-//
-//message Query {
-//  QueryType query = 0;
-//}
-//
-//message RegisterStateReturn {
-//  uint32 PC = 0;
-//  uint32 R1 = 1;
-//  uint32 R2 = 2;
-//  uint32 R3 = 3;
-//  uint32 R4 = 4;
-//  uint32 R5 = 5;
-//  uint32 R6 = 6;
-//  uint32 R7 = 7;
-//  uint32 R8 = 8;
-//  uint32 ACC = 9;
-//}
-//
-//message SimStateReturn {
-//
-//}
-//
-//message SimConfigReturn {
-//  uint32 mem_size = 0;
-//  uint32 mem_access_width = 1;
-//  uint32 framebuffer_width = 2;
-//  uint32 framebuffer_height = 3;
-//  uint32 framebuffer_pixel_bytes = 4;
-//  uint32 framebuffer_address = 5;
-//}
-//
-//message FramebufferStateReturn {
-//  repeated uint32 data = 0;
-//}
-//
-//message MemoryStateReturn {
-//  repeated uint32 data = 0;
-//}
+message FramebufferRequest {
+  optional FramebufferRegion region = 1;
+}
+message FramebufferRegion {
+  uint32 x = 1;
+  uint32 y = 2;
+  uint32 pix = 3;
+}
+
+message FramebufferSegment {
+  repeated uint32 data = 1;
+}
 

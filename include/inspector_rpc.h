@@ -1,5 +1,4 @@
 #pragma once
-
 #include <grpcpp/grpcpp.h>
 #include <memory>
 
@@ -10,5 +9,6 @@ class InspectorClient {
 public:
     InspectorClient(std::shared_ptr<grpc::Channel> channel);
     bool SendCommand();
+    bool GetFrameBuffer();
 };
 

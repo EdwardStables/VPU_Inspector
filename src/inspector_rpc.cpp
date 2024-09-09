@@ -1,12 +1,14 @@
 #include <grpcpp/channel.h>
 #include <grpcpp/client_context.h>
 #include <grpcpp/grpcpp.h>
+#include <grpcpp/support/sync_stream.h>
 #include <memory>
 #include <iostream>
 
 #include "sim_control.grpc.pb.h"
 
 #include "inspector_rpc.h"
+#include "sim_control.pb.h"
 
 using grpc::Channel;
 using grpc::ClientContext;
@@ -34,4 +36,19 @@ bool InspectorClient::SendCommand() {
     return false;
 }
 
+bool InspectorClient::GetFrameBuffer() {
+    FramebufferRequest request; 
+    ClientContext context;
+
+    auto stream = stub_->GetFramebuffer(&context, request);
+
+    FramebufferSegment segment;
+    while (stream->Read(&segment)) {
+        for (auto& d : segment.data()) {
+            std::cout << d << "\n";
+        }
+    }
+
+    return true;
+}
 
