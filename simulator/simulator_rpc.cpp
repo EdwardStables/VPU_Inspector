@@ -6,23 +6,23 @@
 
 #include "sim_control.grpc.pb.h"
 
+#include "simulator_rpc.h"
+
 using grpc::Channel;
 using grpc::ServerContext;
 using grpc::Status;
 using grpc::ServerBuilder;
 using grpc::Server;
 
-class SimulatorServerImpl final : public SimInspector::Service {
-    Status SendCommand(
+Status SimulatorServerImpl::SendCommand(
             ServerContext* context,
             const Command* command,
             CommandResponse* resp
-    ) override {
-        std::cout << "Got command in server" << std::endl;
-        resp->set_ok(true);
-        return Status::OK;
-    }
-};
+) {
+    std::cout << "Got command in server" << std::endl;
+    resp->set_ok(true);
+    return Status::OK;
+}
 
 void run_server() {
     std::string server_address("0.0.0.0:50101");
@@ -36,6 +36,3 @@ void run_server() {
     server->Wait();
 }
 
-int main() {
-    run_server();
-}
