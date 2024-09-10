@@ -1,4 +1,3 @@
-#include <grpcpp/server_builder.h>
 #include <iostream>
 #include <string>
 #include <string_view>
@@ -47,15 +46,26 @@ Status SimulatorServerImpl::GetFramebuffer(
     return Status::OK;
 }
 
-void run_server(std::unique_ptr<SimulatorRPCInterface>& interface) {
-    std::string server_address("0.0.0.0:50101");
-    SimulatorServerImpl service(interface);
+ServerWrapper::ServerWrapper(std::unique_ptr<SimulatorRPCInterface>& interface)
+    : service(interface)
+{
+    run_server();
+}
 
-    ServerBuilder builder;
+void ServerWrapper::run_server() {
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
     builder.RegisterService(&service);
-    std::unique_ptr<Server> server(builder.BuildAndStart());
+    server = std::unique_ptr<Server>(builder.BuildAndStart());
     std::cout << "Server listening on " << server_address << std::endl;
-    server->Wait();
+
+    auto r = [&]() {
+        server->Wait();
+    };
+    server_thread = std::thread{r};
+}
+
+ServerWrapper::~ServerWrapper() {
+    server->Shutdown();
+    server_thread.join();
 }
 

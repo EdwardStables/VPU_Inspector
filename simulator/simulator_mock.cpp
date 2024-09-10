@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <assert.h>
 #include <memory>
+#include <iostream>
 
 #include "simulator_rpc.h"
 #include "simulator_interface.h"
@@ -31,6 +32,13 @@ public:
 
 int main() {
     std::unique_ptr<SimulatorRPCInterface> interface = std::make_unique<MockSimulatorInterface>();
-    run_server(interface);
+    ServerWrapper wrapper(interface);
+    while (true) {
+        std::cout << "Type 'exit' to end program cleanly" << std::endl;
+        std::string inp;
+        std::cin >> inp;
+
+        if (inp == "exit") break;
+    }
 }
 
