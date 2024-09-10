@@ -28,17 +28,19 @@ set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:gRPC::grpc_cpp_plugin>)
 get_filename_component(hw_proto "protos/sim_control.proto" ABSOLUTE)
 get_filename_component(hw_proto_path "${hw_proto}" PATH)
 
+
 # Generated sources
-set(hw_proto_srcs "${CMAKE_CURRENT_BINARY_DIR}/sim_control.pb.cc")
-set(hw_proto_hdrs "${CMAKE_CURRENT_BINARY_DIR}/sim_control.pb.h")
-set(hw_grpc_srcs "${CMAKE_CURRENT_BINARY_DIR}/sim_control.grpc.pb.cc")
-set(hw_grpc_hdrs "${CMAKE_CURRENT_BINARY_DIR}/sim_control.grpc.pb.h")
+set(GEN_CODE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/generated")
+set(hw_proto_srcs "${GEN_CODE_DIRECTORY}/sim_control.pb.cc")
+set(hw_proto_hdrs "${GEN_CODE_DIRECTORY}/sim_control.pb.h")
+set(hw_grpc_srcs "${GEN_CODE_DIRECTORY}/sim_control.grpc.pb.cc")
+set(hw_grpc_hdrs "${GEN_CODE_DIRECTORY}/sim_control.grpc.pb.h")
 
 add_custom_command(
       OUTPUT "${hw_proto_srcs}" "${hw_proto_hdrs}" "${hw_grpc_srcs}" "${hw_grpc_hdrs}"
       COMMAND ${_PROTOBUF_PROTOC}
-      ARGS --grpc_out "${CMAKE_CURRENT_BINARY_DIR}"
-        --cpp_out "${CMAKE_CURRENT_BINARY_DIR}"
+      ARGS --grpc_out "${GEN_CODE_DIRECTORY}"
+      --cpp_out "${GEN_CODE_DIRECTORY}"
         -I "${hw_proto_path}"
         --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
         "${hw_proto}"
@@ -60,19 +62,44 @@ target_link_libraries(hw_grpc_proto
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF})
 
-add_executable(mock_simulator
+#######################
+### Simulator Library
+
+add_library(rpc_server
     "simulator/simulator_rpc.cpp"
-    "simulator/simulator_mock.cpp"
 )
-target_include_directories(mock_simulator
+target_include_directories(rpc_server
    PUBLIC simulator_include
+   PUBLIC ${GEN_CODE_DIRECTORY}
 )
-target_link_libraries(mock_simulator
+target_link_libraries(rpc_server
   hw_grpc_proto
   ${_REFLECTION}
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF}
 )
+
+#######################
+### Mock Simulator Tool
+
+add_executable(mock_simulator
+    "simulator/simulator_mock.cpp"
+)
+target_include_directories(mock_simulator
+   PUBLIC simulator_include
+   PUBLIC ${GEN_CODE_DIRECTORY}
+)
+target_link_libraries(mock_simulator
+  rpc_server 
+  hw_grpc_proto
+  ${_REFLECTION}
+  ${_GRPC_GRPCPP}
+  ${_PROTOBUF_LIBPROTOBUF}
+)
+
+
+##################
+### Inspector Tool
 
 add_executable(inspector
     "src/inspector.cpp"
@@ -82,6 +109,7 @@ add_executable(inspector
 target_include_directories(inspector
    PUBLIC include
    PUBLIC olcPixelGameEngine
+   PUBLIC ${GEN_CODE_DIRECTORY}
 )
 target_link_libraries(inspector
   hw_grpc_proto

@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <assert.h>
 #include <memory>
+#include <iostream>
 
 #include "simulator_rpc.h"
 #include "simulator_interface.h"
@@ -19,6 +20,12 @@ class MockSimulatorInterface : public SimulatorRPCInterface {
 public:
     MockSimulatorInterface() {
         std::fill(data.begin(), data.begin()+data_size, 0);
+        for (int i = 0; i < data.size(); i+=4){
+            data[i+3] = 0xFF; //WHITE
+            data[i+2] = 0xFF;
+            data[i+1] = 0xFF;
+            data[i] = 0xFF; //OPAQUE
+        }
     }
 
     virtual std::array<uint8_t,512> get_memory_segment(uint32_t addr) {
@@ -31,6 +38,13 @@ public:
 
 int main() {
     std::unique_ptr<SimulatorRPCInterface> interface = std::make_unique<MockSimulatorInterface>();
-    run_server(interface);
+    ServerWrapper wrapper(interface);
+    while (true) {
+        std::cout << "Type 'exit' to end program cleanly" << std::endl;
+        std::string inp;
+        std::cin >> inp;
+
+        if (inp == "exit") break;
+    }
 }
 

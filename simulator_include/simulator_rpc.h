@@ -1,5 +1,8 @@
 #pragma once
 #include <string_view>
+#include <thread>
+#include <grpcpp/server_builder.h>
+
 #include "sim_control.grpc.pb.h"
 
 #include "simulator_interface.h"
@@ -25,5 +28,17 @@ public:
     SimulatorServerImpl(std::unique_ptr<SimulatorRPCInterface>& interface);
 };
 
-void run_server(std::unique_ptr<SimulatorRPCInterface>& interface);
+class ServerWrapper {
+    std::string server_address = "0.0.0.0:50101";
+    SimulatorServerImpl service;
+    grpc::ServerBuilder builder;
+    std::unique_ptr<grpc::Server> server;
+
+    std::thread server_thread;
+
+    void run_server();
+public:
+    ServerWrapper(std::unique_ptr<SimulatorRPCInterface>& interface);
+    ~ServerWrapper();
+};
 
