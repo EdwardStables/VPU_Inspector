@@ -47,7 +47,6 @@ bool InspectorClient::GetFrameBuffer(std::unique_ptr<std::array<uint32_t,200*300
     while (stream->Read(&segment)) {
         for (auto& d : segment.data()) {
             assert(ind < 200*300);
-            std::cout << d << std::endl;
             data->at(ind) = d;
             ind++;
         }
