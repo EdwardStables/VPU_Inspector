@@ -36,8 +36,8 @@ Status SimulatorServerImpl::GetFramebuffer(
         ServerWriter<FramebufferSegment>* writer
 ) {
     FramebufferSegment fbs;
-    for (int i = 0; i < 500; i++){
-        fbs.add_data(i);
+    for (int i = 0; i < 200*300; i++){
+        fbs.add_data(0xFF0000FF); //Bright red
         if ((i+1)%100 == 0){
             writer->Write(fbs);
             fbs = FramebufferSegment();

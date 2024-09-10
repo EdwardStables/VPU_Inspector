@@ -77,12 +77,39 @@ target_link_libraries(mock_simulator
 add_executable(inspector
     "src/inspector.cpp"
     "src/inspector_rpc.cpp"
+    "src/olcPixelGameEngine.cpp"
 )
 target_include_directories(inspector
    PUBLIC include
+   PUBLIC olcPixelGameEngine
 )
 target_link_libraries(inspector
   hw_grpc_proto
   ${_REFLECTION}
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF})
+
+# OpenGL
+set(OpenGL_GL_PREFERENCE LEGACY)
+find_package(OpenGL REQUIRED)
+target_include_directories(inspector PUBLIC ${OpenGL_INCLUDE_DIRS})
+target_link_libraries(inspector ${OpenGL_LIBRARIES} OpenGL::GL)
+
+# X11
+find_package(X11 REQUIRED)
+target_link_libraries(inspector X11::X11)
+target_include_directories(inspector PUBLIC ${X11_INCLUDE_DIRS})
+
+# Threads
+find_package(Threads REQUIRED)
+target_link_libraries(inspector Threads::Threads)
+target_include_directories(inspector PUBLIC ${Threads_INCLUDE_DIRS})
+
+target_link_libraries(inspector ${CMAKE_DL_LIBS})
+
+find_package(PNG REQUIRED)
+target_link_libraries(inspector PNG::PNG)
+target_include_directories(inspector PUBLIC ${PNG_INCLUDE_DIRS})
+
+# stdc++fs
+target_link_libraries(inspector stdc++fs)

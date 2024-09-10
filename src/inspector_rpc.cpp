@@ -36,16 +36,20 @@ bool InspectorClient::SendCommand() {
     return false;
 }
 
-bool InspectorClient::GetFrameBuffer() {
+bool InspectorClient::GetFrameBuffer(std::unique_ptr<std::array<uint32_t,200*300>>& data) {
     FramebufferRequest request; 
     ClientContext context;
 
     auto stream = stub_->GetFramebuffer(&context, request);
 
+    int ind = 0;
     FramebufferSegment segment;
     while (stream->Read(&segment)) {
         for (auto& d : segment.data()) {
-            std::cout << d << "\n";
+            assert(ind < 200*300);
+            std::cout << d << std::endl;
+            data->at(ind) = d;
+            ind++;
         }
     }
 
