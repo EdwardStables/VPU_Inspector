@@ -29,6 +29,7 @@ public:
 };
 
 class ServerWrapper {
+    bool enable = true;
     std::string server_address = "0.0.0.0:50101";
     SimulatorServerImpl service;
     grpc::ServerBuilder builder;
@@ -38,7 +39,7 @@ class ServerWrapper {
 
     void run_server();
 public:
-    ServerWrapper(std::unique_ptr<SimulatorRPCInterface>& interface);
+    ServerWrapper(bool enable, std::unique_ptr<SimulatorRPCInterface>& interface);
     ~ServerWrapper();
 };
 

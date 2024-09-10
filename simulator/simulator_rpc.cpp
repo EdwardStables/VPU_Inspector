@@ -57,9 +57,10 @@ Status SimulatorServerImpl::GetFramebuffer(
     return Status::OK;
 }
 
-ServerWrapper::ServerWrapper(std::unique_ptr<SimulatorRPCInterface>& interface)
-    : service(interface)
+ServerWrapper::ServerWrapper(bool enable, std::unique_ptr<SimulatorRPCInterface>& interface)
+    : service(interface), enable(enable)
 {
+    if (!enable) return;
     run_server();
 }
 
@@ -76,7 +77,9 @@ void ServerWrapper::run_server() {
 }
 
 ServerWrapper::~ServerWrapper() {
-    server->Shutdown();
-    server_thread.join();
+    if (enable) {
+        server->Shutdown();
+        server_thread.join();
+    }
 }
 

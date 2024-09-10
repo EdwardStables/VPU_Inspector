@@ -38,7 +38,7 @@ public:
 
 int main() {
     std::unique_ptr<SimulatorRPCInterface> interface = std::make_unique<MockSimulatorInterface>();
-    ServerWrapper wrapper(interface);
+    ServerWrapper wrapper(true,interface);
     while (true) {
         std::cout << "Type 'exit' to end program cleanly" << std::endl;
         std::string inp;
