@@ -34,13 +34,24 @@ Status SimulatorServerImpl::GetFramebuffer(
         const FramebufferRequest* command,
         ServerWriter<FramebufferSegment>* writer
 ) {
+    uint32_t start_addr = 0;
+    uint32_t end_addr = 200*300*4 + start_addr;
+
+    int words = 0;
     FramebufferSegment fbs;
-    for (int i = 0; i < 200*300; i++){
-        fbs.add_data(0xFF0000FF); //Bright red
-        if ((i+1)%100 == 0){
-            writer->Write(fbs);
-            fbs = FramebufferSegment();
+    for (int addr = start_addr; addr < end_addr; addr+=512){
+        auto data = simulator_interface->get_memory_segment(addr);
+        for (int d = 0; d < data.size(); d+=4) {
+            if (addr+d >= end_addr) break; //framebuffer doesn't perfectly fit into 512
+            uint32_t word = data[d+3] << 24;
+            word |= data[d+2] << 16;
+            word |= data[d+1] << 8;
+            word |= data[d];
+            fbs.add_data(word);
+            std::cout << "word " << words++ << std::endl;
         }
+        writer->Write(fbs);
+        fbs = FramebufferSegment();
     }
 
     return Status::OK;

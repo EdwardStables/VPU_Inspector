@@ -20,6 +20,12 @@ class MockSimulatorInterface : public SimulatorRPCInterface {
 public:
     MockSimulatorInterface() {
         std::fill(data.begin(), data.begin()+data_size, 0);
+        for (int i = 0; i < data.size(); i+=4){
+            data[i+3] = 0xFF; //WHITE
+            data[i+2] = 0xFF;
+            data[i+1] = 0xFF;
+            data[i] = 0xFF; //OPAQUE
+        }
     }
 
     virtual std::array<uint8_t,512> get_memory_segment(uint32_t addr) {
