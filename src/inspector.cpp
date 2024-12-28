@@ -33,6 +33,15 @@ public:
                     size_t ind = ScreenWidth()*y + x;
                     uint32_t data = framebuffer_data->at(ind);
                     olc::Pixel colour = olc::Pixel(data);
+
+                    if (colour != olc::Pixel(0,0,0,0)){
+                        std::cout << "not black, " << x << " " << y << " ";
+                        std::cout << std::hex << int(colour.r) << ",";
+                        std::cout << int(colour.g) << ",";
+                        std::cout << int(colour.b) << ",";
+                        std::cout << int(colour.a) << std::dec << "\n";
+                    }
+
                     Draw(x,y,colour);
                 }
             }
@@ -47,7 +56,7 @@ public:
 
 int main() {
 	InspectorGUI inspector;
-    if (inspector.Construct(300, 200, 2, 2))
+    if (inspector.Construct(300, 200, 4, 4))
 		inspector.Start();
 
     return 0;

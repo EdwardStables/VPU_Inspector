@@ -3,6 +3,8 @@
 #include <string_view>
 #include <memory>
 
+#include "defs_pkg.h"
+
 #include "sim_control.grpc.pb.h"
 
 #include "simulator_rpc.h"
@@ -34,10 +36,10 @@ Status SimulatorServerImpl::GetFramebuffer(
         const FramebufferRequest* command,
         ServerWriter<FramebufferSegment>* writer
 ) {
-    uint32_t start_addr = 0;
-    uint32_t end_addr = 200*300*4 + start_addr;
+    //Assumes single-buffering
+    uint32_t start_addr = vpu::defs::FRAMEBUFFER_ADDR;
+    uint32_t end_addr = vpu::defs::FRAMEBUFFER_ADDR + vpu::defs::FRAMEBUFFER_BYTES; 
 
-    int words = 0;
     FramebufferSegment fbs;
     for (int addr = start_addr; addr < end_addr; addr+=512){
         auto data = simulator_interface->get_memory_segment(addr);
@@ -48,20 +50,17 @@ Status SimulatorServerImpl::GetFramebuffer(
             word |= data[d+1] << 8;
             word |= data[d];
             fbs.add_data(word);
-            std::cout << "word " << words++ << std::endl;
         }
         writer->Write(fbs);
         fbs = FramebufferSegment();
     }
+    std::cout << "Transfered framebuffer\n";
 
     return Status::OK;
 }
 
 bool ServerWrapper::is_server_running() {
     return server_running;
-}
-
-void ServerWrapper::run_server() {
 }
 
 ServerWrapper::ServerWrapper(bool enable, SimulatorRPCInterface* interface)

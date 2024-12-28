@@ -48,6 +48,9 @@ add_custom_command(
 # Include generated *.pb.h files
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
+# We rely on the definitions provided by the defs folder. This means this repository cannot be built standalone.
+include_directories("../defs")
+
 # hw_grpc_proto
 add_library(hw_grpc_proto
   ${hw_grpc_srcs}

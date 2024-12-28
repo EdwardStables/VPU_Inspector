@@ -36,7 +36,6 @@ class ServerWrapper {
     std::thread server_thread;
     SimulatorRPCInterface* interface;
 
-    void run_server();
 public:
     bool is_server_running();
     ServerWrapper(bool enable, SimulatorRPCInterface* interface);
