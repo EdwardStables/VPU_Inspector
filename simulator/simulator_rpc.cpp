@@ -69,20 +69,19 @@ ServerWrapper::ServerWrapper(bool enable, SimulatorRPCInterface* interface)
 {
     if (!enable) return;
     std::cout << "Starting server thread... ";
-    interface->get_memory_segment(0x00FF);
-    //server_thread = std::thread( [this] {
-    //    std::cout << "started" << std::endl;;
-    //    SimulatorServerImpl service(this->interface);
-    //    grpc::ServerBuilder builder;
-    //    this->interface->get_memory_segment(0x0000);
-    //    builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
-    //    builder.RegisterService(&service);
-    //    server = std::unique_ptr<Server>(builder.BuildAndStart());
-    //    std::cout << "Server listening on " << server_address << std::endl;
-    //    server_running = true;
-    //    server->Wait();
-    //    server_running = false;
-    //});
+    server_thread = std::thread( [this] {
+        std::cout << "started" << std::endl;;
+        SimulatorServerImpl service(this->interface);
+        grpc::ServerBuilder builder;
+        this->interface->get_memory_segment(0x0000);
+        builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
+        builder.RegisterService(&service);
+        server = std::unique_ptr<Server>(builder.BuildAndStart());
+        std::cout << "Server listening on " << server_address << std::endl;
+        server_running = true;
+        server->Wait();
+        server_running = false;
+    });
 }
 
 ServerWrapper::~ServerWrapper() {
