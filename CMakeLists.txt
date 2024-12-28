@@ -1,6 +1,6 @@
 #Based off CMakeLists.txt in grpc helloworld example
 
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.13)
 set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(VPUInspector CXX)
@@ -27,7 +27,6 @@ set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:gRPC::grpc_cpp_plugin>)
 # Proto file
 get_filename_component(hw_proto "protos/sim_control.proto" ABSOLUTE)
 get_filename_component(hw_proto_path "${hw_proto}" PATH)
-
 
 # Generated sources
 set(GEN_CODE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/generated")
