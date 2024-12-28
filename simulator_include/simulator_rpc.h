@@ -30,16 +30,15 @@ public:
 
 class ServerWrapper {
     bool enable = true;
+    bool server_running = false;
     std::string server_address = "0.0.0.0:50101";
-    SimulatorServerImpl service;
-    grpc::ServerBuilder builder;
     std::unique_ptr<grpc::Server> server;
-
     std::thread server_thread;
 
-    void run_server();
+    void run_server(std::unique_ptr<SimulatorRPCInterface> interface);
 public:
-    ServerWrapper(bool enable, std::unique_ptr<SimulatorRPCInterface>& interface);
+    bool is_server_running();
+    ServerWrapper(bool enable, std::unique_ptr<SimulatorRPCInterface> interface);
     ~ServerWrapper();
 };
 

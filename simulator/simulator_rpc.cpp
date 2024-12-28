@@ -57,23 +57,30 @@ Status SimulatorServerImpl::GetFramebuffer(
     return Status::OK;
 }
 
-ServerWrapper::ServerWrapper(bool enable, std::unique_ptr<SimulatorRPCInterface>& interface)
-    : service(interface), enable(enable)
-{
-    if (!enable) return;
-    run_server();
+bool ServerWrapper::is_server_running() {
+    return server_running;
 }
 
-void ServerWrapper::run_server() {
+void ServerWrapper::run_server(std::unique_ptr<SimulatorRPCInterface> interface) {
+    std::cout << "started" << std::endl;;
+    SimulatorServerImpl service(interface);
+    grpc::ServerBuilder builder;
+    interface->get_memory_segment(0x0000);
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
     builder.RegisterService(&service);
     server = std::unique_ptr<Server>(builder.BuildAndStart());
     std::cout << "Server listening on " << server_address << std::endl;
+    server_running = true;
+    server->Wait();
+    server_running = false;
+}
 
-    auto r = [&]() {
-        server->Wait();
-    };
-    server_thread = std::thread{r};
+ServerWrapper::ServerWrapper(bool enable, std::unique_ptr<SimulatorRPCInterface> interface)
+    : enable(enable)
+{
+    if (!enable) return;
+    std::cout << "Starting server thread... ";
+    server_thread = std::thread(&ServerWrapper::run_server, this, std::move(interface));
 }
 
 ServerWrapper::~ServerWrapper() {
