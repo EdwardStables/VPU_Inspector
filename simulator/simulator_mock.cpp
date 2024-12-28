@@ -40,7 +40,7 @@ int main() {
     auto data = std::make_unique<std::array<uint8_t,data_size>>();
     std::fill(data->begin(), data->begin()+data_size, 0);
     std::unique_ptr<SimulatorRPCInterface> interface = std::make_unique<MockSimulatorInterface>(data);
-    ServerWrapper wrapper(true,std::move(interface));
+    ServerWrapper wrapper(true,interface.get());
     while (true) {
         std::cout << "Type 'exit' to end program cleanly" << std::endl;
         std::string inp;

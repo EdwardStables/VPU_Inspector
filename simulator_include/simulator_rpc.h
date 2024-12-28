@@ -13,7 +13,7 @@ using grpc::Status;
 using grpc::ServerWriter;
 
 class SimulatorServerImpl final : public SimInspector::Service {
-    std::unique_ptr<SimulatorRPCInterface>& simulator_interface;
+    SimulatorRPCInterface* simulator_interface;
     Status SendCommand(
             ServerContext* context,
             const Command* command,
@@ -25,7 +25,7 @@ class SimulatorServerImpl final : public SimInspector::Service {
             ServerWriter<FramebufferSegment>* resp
     ) override;
 public:
-    SimulatorServerImpl(std::unique_ptr<SimulatorRPCInterface>& interface);
+    SimulatorServerImpl(SimulatorRPCInterface* interface);
 };
 
 class ServerWrapper {
@@ -34,11 +34,12 @@ class ServerWrapper {
     std::string server_address = "0.0.0.0:50101";
     std::unique_ptr<grpc::Server> server;
     std::thread server_thread;
+    SimulatorRPCInterface* interface;
 
-    void run_server(std::unique_ptr<SimulatorRPCInterface> interface);
+    void run_server();
 public:
     bool is_server_running();
-    ServerWrapper(bool enable, std::unique_ptr<SimulatorRPCInterface> interface);
+    ServerWrapper(bool enable, SimulatorRPCInterface* interface);
     ~ServerWrapper();
 };
 
