@@ -73,7 +73,6 @@ ServerWrapper::ServerWrapper(bool enable, SimulatorRPCInterface* interface)
         std::cout << "started" << std::endl;;
         SimulatorServerImpl service(this->interface);
         grpc::ServerBuilder builder;
-        this->interface->get_memory_segment(0x0000);
         builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
         builder.RegisterService(&service);
         server = std::unique_ptr<Server>(builder.BuildAndStart());
