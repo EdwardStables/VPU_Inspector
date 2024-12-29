@@ -42,6 +42,7 @@ public:
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
+        Clear(olc::BLACK);
         toolbar.Update(this);
 
         if (!refresh_button->bHeld && held_last) {
