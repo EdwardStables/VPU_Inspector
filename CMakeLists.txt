@@ -48,9 +48,6 @@ add_custom_command(
 # Include generated *.pb.h files
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
-# We rely on the definitions provided by the defs folder. This means this repository cannot be built standalone.
-include_directories("../defs")
-
 # hw_grpc_proto
 add_library(hw_grpc_proto
   ${hw_grpc_srcs}
@@ -80,6 +77,9 @@ target_link_libraries(rpc_server
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF}
 )
+
+add_dependencies(rpc_server vpu_defs)
+target_include_directories(rpc_server PUBLIC ${VPU_DEFS_DIR})
 
 #######################
 ### Mock Simulator Tool
@@ -143,3 +143,6 @@ target_include_directories(inspector PUBLIC ${PNG_INCLUDE_DIRS})
 
 # stdc++fs
 target_link_libraries(inspector stdc++fs)
+
+target_link_libraries(inspector vpu_defs)
+target_include_directories(inspector PUBLIC ${VPU_DEFS_DIR})
