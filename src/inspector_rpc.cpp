@@ -55,3 +55,16 @@ bool InspectorClient::GetFrameBuffer(std::unique_ptr<std::array<uint32_t,200*300
     return true;
 }
 
+bool InspectorClient::GetSourceCode(std::vector<std::string>& lines) {
+    SourceCodeRequest request;
+    SourceCodeResponse response;
+    ClientContext context;
+
+    Status status = stub_->GetSourceCode(&context, request, &response);
+
+    for (auto& line : response.lines()) {
+        lines.push_back(line);
+    }
+
+    return true;
+}

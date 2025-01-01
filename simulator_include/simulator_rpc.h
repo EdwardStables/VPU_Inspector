@@ -24,6 +24,11 @@ class SimulatorServerImpl final : public SimInspector::Service {
             const FramebufferRequest* command,
             ServerWriter<FramebufferSegment>* resp
     ) override;
+    Status GetSourceCode(
+            ServerContext* context,
+            const SourceCodeRequest* command,
+            SourceCodeResponse* resp
+    ) override;
 public:
     SimulatorServerImpl(SimulatorRPCInterface* interface);
 };

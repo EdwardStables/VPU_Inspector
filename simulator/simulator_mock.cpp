@@ -33,6 +33,16 @@ public:
         std::copy(data->begin()+addr,data->begin()+addr+512, ret.begin());
         return ret;
     }
+
+    virtual std::vector<std::string> get_source_code() {
+        return {
+            "this is a test input",
+            "", 
+            "", 
+            "", 
+            "this is the last line"
+        };
+    }
 };
 
 int main() {

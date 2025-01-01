@@ -37,6 +37,12 @@ public:
         refresh_button = new olc::QuickGUI::Button(toolbar,"Refresh",olc::vf2d{0,vpu::defs::FRAMEBUFFER_HEIGHT},olc::vf2d{64.0f,TOOLBAR_HEIGHT});
         toolbar.AddControl(refresh_button);
 
+        std::vector<std::string> source_code;
+        client.GetSourceCode(source_code);
+        for (auto& line : source_code) {
+            std::cout << line << "\n";
+        }
+
 		return true;
 	}
 

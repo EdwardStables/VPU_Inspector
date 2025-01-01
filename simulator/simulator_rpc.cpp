@@ -59,6 +59,21 @@ Status SimulatorServerImpl::GetFramebuffer(
     return Status::OK;
 }
 
+
+Status SimulatorServerImpl::GetSourceCode(
+        ServerContext* context,
+        const SourceCodeRequest* command,
+        SourceCodeResponse* resp
+)  {
+    for (auto& line : simulator_interface->get_source_code()) {
+        resp->add_lines(line);
+    }
+
+    std::cout << "Transfered source code\n";
+
+    return Status::OK;
+}
+
 bool ServerWrapper::is_server_running() {
     return server_running;
 }

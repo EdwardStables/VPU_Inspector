@@ -12,5 +12,6 @@ public:
     InspectorClient(std::shared_ptr<grpc::Channel> channel);
     bool SendCommand();
     bool GetFrameBuffer(std::unique_ptr<std::array<uint32_t,200*300>>& data);
+    bool GetSourceCode(std::vector<std::string>& lines);
 };
 

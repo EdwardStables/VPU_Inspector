@@ -4,6 +4,7 @@ syntax = "proto3";
 service SimInspector {
   rpc SendCommand(Command) returns (CommandResponse) {}
   rpc GetFramebuffer(FramebufferRequest) returns (stream FramebufferSegment) {}
+  rpc GetSourceCode(SourceCodeRequest) returns (SourceCodeResponse) {}
 }
 
 enum CommandType {
@@ -35,3 +36,9 @@ message FramebufferSegment {
   repeated uint32 data = 1;
 }
 
+message SourceCodeRequest {
+}
+
+message SourceCodeResponse {
+  repeated string lines = 1;
+}
