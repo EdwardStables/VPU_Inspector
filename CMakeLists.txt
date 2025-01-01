@@ -105,6 +105,7 @@ target_link_libraries(mock_simulator
 
 add_executable(inspector
     "src/inspector.cpp"
+    "src/source_code_view.cpp"
     "src/inspector_rpc.cpp"
     "src/olcPixelGameEngine.cpp"
 )

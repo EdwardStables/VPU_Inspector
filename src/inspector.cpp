@@ -1,5 +1,7 @@
 #include "inspector_rpc.h"
 
+#include "source_code_view.h"
+
 #include "olcPixelGameEngine.h"
 #include "extensions/olcPGEX_QuickGUI.h"
 #include "../defs/defs_pkg.h"
@@ -14,23 +16,16 @@ class InspectorGUI : public olc::PixelGameEngine {
     olc::QuickGUI::Manager toolbar;
     olc::QuickGUI::Button* refresh_button;
 
-    std::vector<std::string> source_code;    
+    SourceCodeView source_code;
     olc::QuickGUI::TextBox* source_code_box;
 
     bool held_last = false;
 
-    std::string get_source_code_string() {
-        std::string ret;
-        for (auto& line : source_code) {
-            ret += line + "\n";
-        }
-        return ret;
-    }
-
 public:
 	InspectorGUI()
         : client(grpc::CreateChannel("localhost:50101", grpc::InsecureChannelCredentials())),
-          framebuffer_data(std::make_unique<std::array<uint32_t,200*300>>()),
+          source_code(olc::vf2d(vpu::defs::FRAMEBUFFER_WIDTH,0), olc::vf2d(SOURCE_VIEW_WIDTH,ScreenHeight()), client),
+          framebuffer_data(std::make_unique<std::array<uint32_t,FRAMEBUFFER_LEN>>()),
           toolbar(false)
 	{
 		// Name your application
@@ -43,17 +38,13 @@ public:
         //TODO run configuration here
         bool ok = client.SendCommand();
         std::cout << "Server gave " << (ok ? "OK" : "not OK") << std::endl;
-        client.GetSourceCode(source_code);
+        source_code.init();
 
         for (int i = 0; i < FRAMEBUFFER_LEN; i++)
             framebuffer_data->at(i) = 0;
 
         refresh_button = new olc::QuickGUI::Button(toolbar,"Refresh",olc::vf2d{0,vpu::defs::FRAMEBUFFER_HEIGHT},olc::vf2d{64.0f,TOOLBAR_HEIGHT});
         toolbar.AddControl(refresh_button);
-        source_code_box = new olc::QuickGUI::TextBox(toolbar, get_source_code_string(), olc::vf2d(300.0f, 8.0f), olc::vf2d(SOURCE_VIEW_WIDTH, 8*source_code.size()));
-        source_code_box->nAlign = olc::QuickGUI::Label::Alignment::Left;
-        source_code_box->bHasBorder = false;
-        toolbar.AddControl(source_code_box);
 
 		return true;
 	}
@@ -69,6 +60,8 @@ public:
         }
         held_last = refresh_button->bHeld;
 
+        source_code.update(fElapsedTime, *this);
+
 
 
         for (int y = 0; y < vpu::defs::FRAMEBUFFER_HEIGHT; y++) {
@@ -81,6 +74,7 @@ public:
         }
 
         toolbar.DrawDecal(this);
+        source_code.draw(*this);
 
 		return true;
 	}
