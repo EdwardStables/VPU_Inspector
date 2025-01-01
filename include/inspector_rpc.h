@@ -10,7 +10,11 @@ class InspectorClient {
     std::unique_ptr<SimInspector::Stub> stub_;
 public:
     InspectorClient(std::shared_ptr<grpc::Channel> channel);
-    bool SendCommand();
+    bool Pause();
+    bool Run();
+    bool Step();
+    bool Stop();
+    bool SendCommand(CommandType action);
     bool GetFrameBuffer(std::unique_ptr<std::array<uint32_t,200*300>>& data);
     bool GetSourceCode(std::vector<std::string>& lines);
 };

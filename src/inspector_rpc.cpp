@@ -18,9 +18,26 @@ InspectorClient::InspectorClient(std::shared_ptr<Channel> channel)
     : stub_(SimInspector::NewStub(channel))
 {}
 
-bool InspectorClient::SendCommand() {
+bool InspectorClient::Pause() {
+    return SendCommand(CommandType::PAUSE);
+}
+
+bool InspectorClient::Run() {
+    return SendCommand(CommandType::RUN);
+}
+
+bool InspectorClient::Step() {
+    return SendCommand(CommandType::STEP);
+}
+
+bool InspectorClient::Stop() {
+    return SendCommand(CommandType::STOP);
+}
+
+
+bool InspectorClient::SendCommand(CommandType action) {
     Command command; 
-    command.set_command(CommandType::PAUSE);
+    command.set_command(action);
     command.set_step_size(0);
     
     CommandResponse response;

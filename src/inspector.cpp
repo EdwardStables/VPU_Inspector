@@ -14,12 +14,18 @@ class InspectorGUI : public olc::PixelGameEngine {
     InspectorClient client;
     std::unique_ptr<std::array<uint32_t,FRAMEBUFFER_LEN>> framebuffer_data;
     olc::QuickGUI::Manager toolbar;
+
     olc::QuickGUI::Button* refresh_button;
+    bool refresh_held_last = false;
+
+    olc::QuickGUI::Button* step_button;
+    bool step_held_last = false;
+
+    olc::QuickGUI::Button* run_button;
+    bool run_held_last = false;
 
     SourceCodeView source_code;
-    olc::QuickGUI::TextBox* source_code_box;
 
-    bool held_last = false;
 
 public:
 	InspectorGUI()
@@ -35,16 +41,22 @@ public:
 public:
 	bool OnUserCreate() override
 	{
-        //TODO run configuration here
-        bool ok = client.SendCommand();
-        std::cout << "Server gave " << (ok ? "OK" : "not OK") << std::endl;
         source_code.init();
 
         for (int i = 0; i < FRAMEBUFFER_LEN; i++)
             framebuffer_data->at(i) = 0;
 
-        refresh_button = new olc::QuickGUI::Button(toolbar,"Refresh",olc::vf2d{0,vpu::defs::FRAMEBUFFER_HEIGHT},olc::vf2d{64.0f,TOOLBAR_HEIGHT});
+        float xoffs = 0;
+        olc::vf2d button_size = {64, TOOLBAR_HEIGHT};
+        refresh_button = new olc::QuickGUI::Button(toolbar,"Refresh",olc::vf2d{xoffs,vpu::defs::FRAMEBUFFER_HEIGHT},button_size);
         toolbar.AddControl(refresh_button);
+        xoffs+=button_size.x;
+        step_button = new olc::QuickGUI::Button(toolbar,"Step",olc::vf2d{xoffs,vpu::defs::FRAMEBUFFER_HEIGHT},button_size);
+        toolbar.AddControl(step_button);
+        xoffs+=button_size.x;
+        run_button = new olc::QuickGUI::Button(toolbar,"Run",olc::vf2d{xoffs,vpu::defs::FRAMEBUFFER_HEIGHT},button_size);
+        toolbar.AddControl(run_button);
+        xoffs+=button_size.x;
 
 		return true;
 	}
@@ -54,11 +66,23 @@ public:
         Clear(olc::BLACK);
         toolbar.Update(this);
 
-        if (!refresh_button->bHeld && held_last) {
+        if (!refresh_button->bHeld && refresh_held_last) {
             std::cout << "Refreshing framebuffer" << std::endl;
             bool ok = client.GetFrameBuffer(framebuffer_data);
         }
-        held_last = refresh_button->bHeld;
+        refresh_held_last = refresh_button->bHeld;
+
+        if (!step_button->bHeld && step_held_last) {
+            std::cout << "Step" << std::endl;
+            bool ok = client.Step();
+        }
+        step_held_last = step_button->bHeld;
+
+        if (!run_button->bHeld && run_held_last) {
+            std::cout << "Run" << std::endl;
+            bool ok = client.Run();
+        }
+        run_held_last = run_button->bHeld;
 
         source_code.update(fElapsedTime, *this);
 

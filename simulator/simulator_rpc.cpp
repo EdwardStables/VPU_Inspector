@@ -27,6 +27,12 @@ Status SimulatorServerImpl::SendCommand(
             CommandResponse* resp
 ) {
     std::cout << "Got command in server" << std::endl;
+    switch(command->command()) {
+        case CommandType::PAUSE: std::cout << "Got PAUSE\n"; break;
+        case CommandType::RUN: std::cout << "Got RUN\n"; break;
+        case CommandType::STEP: std::cout << "Got STEP\n"; break;
+        case CommandType::STOP: std::cout << "Got STOP\n"; break;
+    }
     resp->set_ok(true);
     return Status::OK;
 }
