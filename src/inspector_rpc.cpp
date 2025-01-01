@@ -85,3 +85,15 @@ bool InspectorClient::GetSourceCode(std::vector<std::string>& lines) {
 
     return true;
 }
+
+bool InspectorClient::GetPC(uint32_t& pc) {
+    PCRequest request;
+    PCResponse response;
+    ClientContext context;
+
+    Status status = stub_->GetPC(&context, request, &response);
+
+    pc = response.pc();
+
+    return true;
+}

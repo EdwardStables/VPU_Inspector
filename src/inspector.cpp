@@ -75,6 +75,9 @@ public:
         if (!step_button->bHeld && step_held_last) {
             std::cout << "Step" << std::endl;
             bool ok = client.Step();
+            uint32_t pc;
+            ok = client.GetPC(pc);
+            source_code.set_highlight(pc);
         }
         step_held_last = step_button->bHeld;
 

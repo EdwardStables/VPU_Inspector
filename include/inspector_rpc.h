@@ -17,5 +17,6 @@ public:
     bool SendCommand(CommandType action);
     bool GetFrameBuffer(std::unique_ptr<std::array<uint32_t,200*300>>& data);
     bool GetSourceCode(std::vector<std::string>& lines);
+    bool GetPC(uint32_t& pc);
 };
 

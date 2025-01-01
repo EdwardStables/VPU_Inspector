@@ -33,6 +33,7 @@ Status SimulatorServerImpl::SendCommand(
         case CommandType::STEP: std::cout << "Got STEP\n"; break;
         case CommandType::STOP: std::cout << "Got STOP\n"; break;
     }
+    simulator_interface->set_command(command->command());
     resp->set_ok(true);
     return Status::OK;
 }
@@ -77,6 +78,15 @@ Status SimulatorServerImpl::GetSourceCode(
 
     std::cout << "Transfered source code\n";
 
+    return Status::OK;
+}
+
+Status SimulatorServerImpl::GetPC(
+        ServerContext* context,
+        const PCRequest* command,
+        PCResponse* resp
+)  {
+    resp->set_pc(simulator_interface->get_pc());
     return Status::OK;
 }
 

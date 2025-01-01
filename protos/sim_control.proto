@@ -5,6 +5,7 @@ service SimInspector {
   rpc SendCommand(Command) returns (CommandResponse) {}
   rpc GetFramebuffer(FramebufferRequest) returns (stream FramebufferSegment) {}
   rpc GetSourceCode(SourceCodeRequest) returns (SourceCodeResponse) {}
+  rpc GetPC(PCRequest) returns (PCResponse) {}
 }
 
 enum CommandType {
@@ -41,4 +42,11 @@ message SourceCodeRequest {
 
 message SourceCodeResponse {
   repeated string lines = 1;
+}
+
+message PCRequest {
+}
+
+message PCResponse {
+  uint32 pc = 1;
 }

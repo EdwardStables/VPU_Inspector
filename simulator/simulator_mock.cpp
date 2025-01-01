@@ -43,6 +43,12 @@ public:
             "this is the last line"
         };
     }
+
+    void set_command(CommandType command) {}
+
+    uint32_t get_pc() {
+        return 0;
+    }
 };
 
 int main() {

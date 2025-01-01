@@ -4,6 +4,7 @@
 #include <grpcpp/server_builder.h>
 
 #include "sim_control.grpc.pb.h"
+#include "sim_control.pb.h"
 
 #include "simulator_interface.h"
 
@@ -28,6 +29,11 @@ class SimulatorServerImpl final : public SimInspector::Service {
             ServerContext* context,
             const SourceCodeRequest* command,
             SourceCodeResponse* resp
+    ) override;
+    Status GetPC(
+            ServerContext* context,
+            const PCRequest* command,
+            PCResponse* resp
     ) override;
 public:
     SimulatorServerImpl(SimulatorRPCInterface* interface);

@@ -29,8 +29,13 @@ void SourceCodeView::update(float dt, olc::PixelGameEngine& pge) {
 void SourceCodeView::draw(olc::PixelGameEngine& pge) {
     float ypos = 0;
     for (int i = scroll_offset; i < lines.size(); i++) {
-        pge.DrawStringDecal({pos.x, pos.y + ypos}, lines[i]);
+        olc::Pixel colour = (highlight_pc && i*4 == highlight_pc.value()) ? olc::YELLOW : olc::WHITE;
+        pge.DrawStringDecal({pos.x, pos.y + ypos}, lines[i], colour);
         ypos += 8;
         if (ypos > size.y) break;
     }
+}
+
+void SourceCodeView::set_highlight(uint32_t pc) {
+    highlight_pc = pc;
 }
