@@ -82,7 +82,7 @@ public:
 
 int main() {
 	InspectorGUI inspector;
-    if (inspector.Construct(vpu::defs::FRAMEBUFFER_WIDTH + SOURCE_VIEW_WIDTH, vpu::defs::FRAMEBUFFER_HEIGHT + TOOLBAR_HEIGHT, 4, 4))
+    if (inspector.Construct(vpu::defs::FRAMEBUFFER_WIDTH + SOURCE_VIEW_WIDTH, vpu::defs::FRAMEBUFFER_HEIGHT + TOOLBAR_HEIGHT, 2, 2))
 		inspector.Start();
 
     return 0;

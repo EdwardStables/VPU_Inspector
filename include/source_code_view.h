@@ -12,6 +12,9 @@ class SourceCodeView {
     InspectorClient& client;
     std::vector<std::string> lines;
 
+    int scroll_offset = 0;
+    int max_visible_lines;
+
 public:
     SourceCodeView(olc::vf2d pos, olc::vf2d size, InspectorClient& client);
     void init();
